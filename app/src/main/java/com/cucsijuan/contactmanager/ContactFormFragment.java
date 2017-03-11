@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,8 +35,7 @@ import static com.cucsijuan.contactmanager.DBHelper.COL_NAME;
 import static com.cucsijuan.contactmanager.DBHelper.COL_PHONE;
 import static com.cucsijuan.contactmanager.DBHelper.TABLE_CONTACTS;
 
-public class ContactFormFragment extends Fragment
-{
+public class ContactFormFragment extends Fragment {
     private static final int REQUEST_CAMERA = 1888;
     private boolean fotoOk = false;
     private TextView nameView;
@@ -48,20 +46,20 @@ public class ContactFormFragment extends Fragment
     //private GoogleApiClient client;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contactform, container, false);
         return rootView;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
-    {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        nameView = (TextView) view.findViewById(R.id.nombre_de_persona);
-        lastnameView = (TextView) view.findViewById(R.id.lastName);
-        emailView = (TextView) view.findViewById(R.id.emailAddress);
-        phoneView = (TextView) getView().findViewById(R.id.phoneNumber);
+
+        nameView = (TextView) view.findViewById(R.id.edit_name);
+        lastnameView = (TextView) view.findViewById(R.id.edit_last_name);
+        emailView = (TextView) view.findViewById(R.id.edit_email_address);
+        phoneView = (TextView) getView().findViewById(R.id.edit_phone_number);
+
         //photoView = (ImageView) findViewById(R.id.image_contact);
 
 //        Typeface font = Typeface.createFromAsset( getActivity().getAssets(), "fontawesome-webfont.ttf" );
@@ -75,41 +73,38 @@ public class ContactFormFragment extends Fragment
 //        TextView editUserImage = (TextView)getView().findViewById(R.id.icon_edit);
 //        editUserImage.setTypeface(font);
 //
-        TextView editImage = (TextView)getView().findViewById(R.id.edit_image);
+        TextView editImage = (TextView) getView().findViewById(R.id.edit_image);
 
-        editImage.setOnClickListener(new View.OnClickListener()
-        {
+        editImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-             File photoFile = null;
-             try {
-                 photoFile = createImageFile();
-             } catch (IOException ex) {
-                 // Error occurred while creating the File
-                 Toast.makeText(getActivity(), "Error taking photo", Toast.LENGTH_LONG).show();
-                 return;
-             }
-             if (photoFile != null) {
-                 Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                         "com.ana_pc.contactlist",
-                         photoFile);
-                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                 startActivityForResult(intent, REQUEST_CAMERA);
-             }
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                    Toast.makeText(getActivity(), "Error taking photo", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                            "com.ana_pc.contactlist",
+                            photoFile);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(intent, REQUEST_CAMERA);
+                }
             }
-            });
+        });
 
         Intent intent = getActivity().getIntent();
         final long id = intent.getLongExtra("personID", 0);
         final DBHelper bh = new DBHelper(getActivity());
         final String idString = Long.toString(id);
-        if(id != 0)
-        {
+        if (id != 0) {
             SQLiteDatabase dbRead = bh.getReadableDatabase();
-            Cursor cursor = dbRead.rawQuery("SELECT * FROM " + TABLE_CONTACTS + " WHERE _id = ?", new String[]{ idString });
+            Cursor cursor = dbRead.rawQuery("SELECT * FROM " + TABLE_CONTACTS + " WHERE _id = ?", new String[]{idString});
             cursor.moveToFirst();
             nameView.setText(cursor.getString(cursor.getColumnIndex("name")));
             lastnameView.setText(cursor.getString(cursor.getColumnIndex("lastname")));
@@ -129,19 +124,18 @@ public class ContactFormFragment extends Fragment
             dbRead.close();
         }
 
-        getActivity().findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+        getActivity().findViewById(R.id.edit_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                TextView nameEdit = (TextView)getActivity().findViewById(R.id.nombre_de_persona);
-                TextView lastNameEdit = (TextView)getActivity().findViewById(R.id.lastName);
-                TextView emailEdit = (TextView)getActivity().findViewById(R.id.emailAddress);
-                TextView phoneEdit = (TextView)getActivity().findViewById(R.id.phoneNumber);
+                TextView nameEdit = (TextView) getActivity().findViewById(R.id.edit_name);
+                TextView lastNameEdit = (TextView) getActivity().findViewById(R.id.edit_last_name);
+                TextView emailEdit = (TextView) getActivity().findViewById(R.id.edit_email_address);
+                TextView phoneEdit = (TextView) getActivity().findViewById(R.id.edit_phone_number);
 
                 String name = nameEdit.getText().toString();
 
-                if (name == null || name.isEmpty())
-                {
+                if (name == null || name.isEmpty()) {
                     Toast.makeText(getActivity(), "Name can not be empty", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -162,14 +156,11 @@ public class ContactFormFragment extends Fragment
 
                 Intent action = new Intent();
 
-                if(id != 0)
-                {
+                if (id != 0) {
                     // Hacemos un update
                     dbWrite.update(TABLE_CONTACTS, cv, "_id = ?", new String[]{Long.toString(id)});
                     action.putExtra("create", "false");
-                }
-                else
-                {
+                } else {
                     // Hacemos un insert
                     dbWrite.insert(TABLE_CONTACTS, null, cv);
                     action.putExtra("create", "true");
@@ -178,7 +169,7 @@ public class ContactFormFragment extends Fragment
                 action.putExtra("fullname", fullname);
 
                 dbWrite.close();
-
+                notifyToTarget(Activity.RESULT_OK);
                 Intent intent = getActivity().getIntent();
                 intent.putExtra("personID", id);
                 FragmentManager manager = getFragmentManager();
@@ -187,11 +178,12 @@ public class ContactFormFragment extends Fragment
                 transaction.commit();
 
 
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 //getActivity().setResult(getActivity().RESULT_OK, action);
                 //getActivity().finish();
+
             }
         });
     }
@@ -200,15 +192,21 @@ public class ContactFormFragment extends Fragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CAMERA){
-            if(resultCode == Activity.RESULT_OK)
-            {
+        if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
                 Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-                ImageView image = (ImageView) getView().findViewById(R.id.image_contact);
+                ImageView image = (ImageView) getView().findViewById(R.id.edit_image_contact);
                 image.setImageBitmap(imageBitmap);
                 fotoOk = true;
                 return;
             }
+        }
+    }
+
+    private void notifyToTarget(int code) {
+        Fragment targetFragment = getTargetFragment();
+        if (targetFragment != null) {
+            targetFragment.onActivityResult(getTargetRequestCode(), code, null);
         }
     }
 
