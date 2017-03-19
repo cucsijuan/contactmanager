@@ -51,17 +51,18 @@
             android:drawableLeft="@drawable/ic_menu_phone"
             android:drawablePadding="5dp"
             android:layout_marginBottom="5dp"
+
             android:hint="Add phone number"
             android:inputType="phone" />
-        <AutoCompleteTextView
-            android:id="@+id/edit_address"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_menu_contacts"
+            android:text="Add Location:"
+            android:textSize="8pt"
+            android:drawableLeft="@drawable/ic_menu_location"
+            android:layout_marginStart="5dp"
             android:drawablePadding="5dp"
-            android:layout_marginBottom="5dp"
-            android:hint="Add Address"
-            android:inputType="" />
+            android:layout_marginBottom="5dp"/>
 
         <fragment
             android:id="@+id/place_autocomplete_fragment"
