@@ -54,15 +54,18 @@
 
             android:hint="Add phone number"
             android:inputType="phone" />
-        <TextView
+
+        <AutoCompleteTextView
+            android:id="@+id/edit_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Location:"
+            android:hint="Add Location:"
             android:textSize="8pt"
             android:drawableLeft="@drawable/ic_menu_location"
             android:layout_marginStart="5dp"
             android:drawablePadding="5dp"
             android:layout_marginBottom="5dp"/>
+
 
         <fragment
             android:id="@+id/place_autocomplete_fragment"
@@ -70,10 +73,7 @@
             android:layout_height="wrap_content"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             />
-        <AutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+
 
         <TextView
             android:id="@+id/edit_image"
