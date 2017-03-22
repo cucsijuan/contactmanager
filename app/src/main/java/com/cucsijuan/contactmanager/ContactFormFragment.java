@@ -71,6 +71,7 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
     private TextView emailView;
     private TextView phoneView;
     private ImageView photoView;
+    private AutoCompleteTextView autoCompView;
     private String mCurrentPhotoPath;
     private long id;
     private DBHelper bh;
@@ -81,7 +82,7 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
 
-    private static final String API_KEY = "AIzaSyDo34a30iQpun1Zw6jxOm8I09AmPCVAYuw";
+    private static final String API_KEY = "AIzaSyCsgS3pVL1I92doUVZ79tCkf7_OBKIqL-M";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,17 +100,12 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         phoneView = (TextView) getView().findViewById(R.id.edit_phone_number);
         photoView = (ImageView) getView().findViewById(R.id.edit_image_contact);
 
-        FragmentManager manager = getChildFragmentManager();
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                manager.findFragmentById(R.id.place_autocomplete_fragment);
-
         TextView editImage = (TextView) getView().findViewById(R.id.edit_image);
 
-        AutoCompleteTextView autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.edit_location);
+        autoCompView = (AutoCompleteTextView) getView().findViewById(R.id.edit_location);
 
         autoCompView.setAdapter(new ContactFormFragment.GooglePlacesAutocompleteAdapter(getActivity().getApplicationContext(), R.layout.list_item));
         autoCompView.setOnItemClickListener(this);
-
 
 
         editImage.setOnClickListener(new View.OnClickListener() {
@@ -134,20 +130,6 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
             }
         });
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-
-        });
 
         Intent intent = getActivity().getIntent();
         id = intent.getLongExtra("personID", 0);
@@ -308,7 +290,7 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         try {
             StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
             sb.append("?key=" + API_KEY);
-            sb.append("&components=country:gr");
+            //sb.append("&components=country:gr");
             sb.append("&input=" + URLEncoder.encode(input, "utf8"));
 
             URL url = new URL(sb.toString());
@@ -397,5 +379,12 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
             };
             return filter;
         }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        autoCompView.setText("");
     }
 }

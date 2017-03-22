@@ -24,7 +24,7 @@ package="com.cucsijuan.contactmanager">
         </intent-filter>
     </activity>
     <meta-data android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDo34a30iQpun1Zw6jxOm8I09AmPCVAYuw" />
+        android:value="AIzaSyCsgS3pVL1I92doUVZ79tCkf7_OBKIqL-M" />
 </application>
 
 </manifest>

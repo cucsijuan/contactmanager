@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity
             case 0:
                 fragmentTransaction = manager.beginTransaction();
                 fragmentTransaction.replace(R.id.content_main, inboxFragment);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 fab.setImageDrawable(getDrawable(R.drawable.ic_dialog_add));
                 break;
