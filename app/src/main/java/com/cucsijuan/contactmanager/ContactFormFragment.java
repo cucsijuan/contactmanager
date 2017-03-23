@@ -32,12 +32,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.vision.barcode.Barcode;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,7 +58,6 @@ import static com.cucsijuan.contactmanager.DBHelper.COL_NAME;
 import static com.cucsijuan.contactmanager.DBHelper.COL_PHONE;
 import static com.cucsijuan.contactmanager.DBHelper.TABLE_CONTACTS;
 import static com.cucsijuan.contactmanager.DBHelper.COL_PHOTO;
-import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class ContactFormFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final int REQUEST_CAMERA = 1888;
@@ -278,7 +274,11 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
 
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String str = (String) adapterView.getItemAtPosition(position);
+        saveLocation(str);
+        Toast.makeText(getView().getContext(), str, Toast.LENGTH_SHORT).show();
+
 
     }
 
@@ -379,6 +379,22 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
             };
             return filter;
         }
+    }
+
+    public RemoteCommand saveLocation(String location){
+        RemoteCommand result = new RemoteCommand();
+
+        result.setType(Type.GET);
+        result.setUrl(URL);
+        result.addGetParam("address", theAddress);
+        result.addGetParam("sensor", "false");
+        result.addGetParam("language", "en");
+
+        // See description about GeocoderXMLHandler
+        result.setXmlHandler(new GeocoderXMLHandler());
+
+        return result;
+
     }
 
 
