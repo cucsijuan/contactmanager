@@ -20,8 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL_EMAIL = "email";
     public static final String COL_PHONE = "phone";
     public static final String COL_PHOTO = "photo";
-    public static final String COL_LONG= "loclong";
-    public static final String COL_LAT= "loclat";
+    public static final String COL_ADDRESS= "loclong";
 
     private static final String DATABASE_NAME = "Contacts.db";
     private static final int DATABASE_VERSION = 2;
@@ -34,8 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + COL_LASTNAME + " text not null,"
             + COL_EMAIL + " text ,"
             + COL_PHONE + " text ,"
-            + COL_LONG + " text ,"
-            + COL_LAT + " text ,"
+            + COL_ADDRESS + " text ,"
             + COL_PHOTO + " text " +
             ");";
 

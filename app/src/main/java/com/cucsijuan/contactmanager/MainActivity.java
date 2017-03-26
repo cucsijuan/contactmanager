@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity
 
     private static int REQUEST_CONTACT = 85;
     private ContactListFragment inboxFragment;
-    private ContactFormFragment fragment2;
+    //private ContactFormFragment fragment2;
     private CallFragment callFragment;
     private static FloatingActionButton fab;
     private static FloatingActionButton fabEdit;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fabEdit = (FloatingActionButton) findViewById(R.id.fabEdit);
         inboxFragment = new ContactListFragment();
-        fragment2 = new ContactFormFragment();
+
         callFragment = new CallFragment();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -78,8 +78,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                if (fragment2 != null && fragment2.isVisible()) {
-                    if (fragment2.saveContact()== true){
+                if (manager.findFragmentByTag("contactForm") != null && manager.findFragmentByTag("contactForm").isVisible()) {
+                    ContactFormFragment tempForm = (ContactFormFragment) manager.findFragmentByTag("contactForm");
+                    if (tempForm.saveContact() == true){
                         setFragment(0);
                     }
                 } else if (contactViewFragment!=null && contactViewFragment.isVisible()) {
@@ -176,11 +177,11 @@ public class MainActivity extends AppCompatActivity
             case 0:
                 fragmentTransaction = manager.beginTransaction();
                 fragmentTransaction.replace(R.id.content_main, inboxFragment);
-                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 fab.setImageDrawable(getDrawable(R.drawable.ic_dialog_add));
                 break;
             case 1:
+                ContactFormFragment fragment2 = new ContactFormFragment();
                 getIntent().putExtra("personID", 0);
                 fragmentTransaction= manager.beginTransaction();
                 fragmentTransaction.replace(R.id.content_main, fragment2, "contactForm");
@@ -200,9 +201,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case 3:
                 fabEdit.hide();
+                ContactFormFragment fragment3 = new ContactFormFragment();
                 fragmentTransaction = manager.beginTransaction();
 
-                fragmentTransaction.replace(R.id.content_main, fragment2, "contactForm");
+                fragmentTransaction.replace(R.id.content_main, fragment3, "contactForm");
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 fab.setImageDrawable(getDrawable(R.drawable.ic_menu_ok));

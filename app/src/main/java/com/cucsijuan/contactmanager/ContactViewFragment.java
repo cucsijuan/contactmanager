@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import static com.cucsijuan.contactmanager.DBHelper.COL_ADDRESS;
 import static com.cucsijuan.contactmanager.DBHelper.COL_EMAIL;
 import static com.cucsijuan.contactmanager.DBHelper.COL_LASTNAME;
 import static com.cucsijuan.contactmanager.DBHelper.COL_NAME;
@@ -28,6 +29,7 @@ public class ContactViewFragment extends Fragment {
     private TextView lastnameView;
     private TextView emailView;
     private TextView phoneView;
+    private TextView addressView;
     private ImageView photoView;
 
     public ContactViewFragment() {
@@ -40,6 +42,7 @@ public class ContactViewFragment extends Fragment {
         lastnameView = (TextView) getActivity().findViewById(R.id.view_lastname);
         emailView = (TextView) getActivity().findViewById(R.id.view_email);
         phoneView = (TextView) getActivity().findViewById(R.id.view_phone_number);
+        addressView = (TextView) getActivity().findViewById(R.id.view_location);
         photoView = (ImageView) getActivity().findViewById(R.id.view_image_contact);
 
         Intent intent = getActivity().getIntent();
@@ -54,6 +57,7 @@ public class ContactViewFragment extends Fragment {
         lastnameView.setText(cursor.getString(cursor.getColumnIndex(COL_LASTNAME)));
         emailView.setText(cursor.getString(cursor.getColumnIndex(COL_EMAIL)));
         phoneView.setText(cursor.getString(cursor.getColumnIndex(COL_PHONE)));
+        addressView.setText(cursor.getString(cursor.getColumnIndex(COL_ADDRESS)));
         String photo = cursor.getString(cursor.getColumnIndex(COL_PHOTO));
         if(photo != null)
         {

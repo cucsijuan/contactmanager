@@ -33,6 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 
 
@@ -52,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.cucsijuan.contactmanager.DBHelper.COL_ADDRESS;
 import static com.cucsijuan.contactmanager.DBHelper.COL_EMAIL;
 import static com.cucsijuan.contactmanager.DBHelper.COL_LASTNAME;
 import static com.cucsijuan.contactmanager.DBHelper.COL_NAME;
@@ -140,6 +144,8 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
             lastnameView.setText(cursor.getString(cursor.getColumnIndex(COL_LASTNAME)));
             emailView.setText(cursor.getString(cursor.getColumnIndex(COL_EMAIL)));
             phoneView.setText(cursor.getString(cursor.getColumnIndex(COL_PHONE)));
+            autoCompView.setText(cursor.getString(cursor.getColumnIndex(COL_ADDRESS)));
+
             String photo = cursor.getString(cursor.getColumnIndex(COL_PHOTO));
             if(photo != null)
             {
@@ -160,6 +166,7 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         TextView lastNameEdit = (TextView) getActivity().findViewById(R.id.edit_last_name);
         TextView emailEdit = (TextView) getActivity().findViewById(R.id.edit_email_address);
         TextView phoneEdit = (TextView) getActivity().findViewById(R.id.edit_phone_number);
+        TextView addressEdit = (TextView) getActivity().findViewById(R.id.edit_location);
 
         String name = nameEdit.getText().toString();
 
@@ -171,7 +178,7 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         String lastName = lastNameEdit.getText().toString();
         String email = emailEdit.getText().toString();
         String phone = phoneEdit.getText().toString();
-
+        String address = addressEdit.getText().toString();
         SQLiteDatabase dbWrite = bh.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -179,6 +186,8 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         cv.put(COL_LASTNAME, lastName);
         cv.put(COL_EMAIL, email);
         cv.put(COL_PHONE, phone);
+        cv.put(COL_ADDRESS,address);
+
         if(fotoOk)
             cv.put(COL_PHOTO, mCurrentPhotoPath);
 
@@ -216,11 +225,19 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-                ImageView image = (ImageView) getView().findViewById(R.id.edit_image_contact);
-                image.setImageBitmap(imageBitmap);
-                fotoOk = true;
-                return;
+                try {
+                    Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+                    ImageView image = (ImageView) getView().findViewById(R.id.edit_image_contact);
+                    image.setImageBitmap(imageBitmap);
+                    fotoOk = true;
+                    return;
+                }catch (Exception ex){
+                    Log.e("Guardar imagen","ERROR: " + ex.getStackTrace());
+                    return;
+                }
+
+
+
             }
         }
     }
@@ -248,35 +265,10 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         return image;
     }
 
-    public LatLng getLocationFromAddress(String strAddress){
-
-        Geocoder coder = new Geocoder(getView().getContext());
-        List<Address> address;
-        LatLng p1=null;
-
-        try {
-            address = coder.getFromLocationName(strAddress,5);
-            if (address==null) {
-                return null;
-            }
-            Address location=address.get(0);
-            location.getLatitude();
-            location.getLongitude();
-
-            p1 = new LatLng ((location.getLatitude() * 1E6), (location.getLongitude() * 1E6));
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return p1;
-    }
-
-
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         String str = (String) adapterView.getItemAtPosition(position);
-        saveLocation(str);
+        //saveLocation(str);
         Toast.makeText(getView().getContext(), str, Toast.LENGTH_SHORT).show();
 
 
@@ -323,6 +315,7 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
             // Extract the Place descriptions from the results
             resultList = new ArrayList(predsJsonArray.length());
             for (int i = 0; i < predsJsonArray.length(); i++) {
+
                 System.out.println(predsJsonArray.getJSONObject(i).getString("description"));
                 System.out.println("============================================================");
                 resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
@@ -381,26 +374,10 @@ public class ContactFormFragment extends Fragment implements AdapterView.OnItemC
         }
     }
 
-    public RemoteCommand saveLocation(String location){
-        RemoteCommand result = new RemoteCommand();
-
-        result.setType(Type.GET);
-        result.setUrl(URL);
-        result.addGetParam("address", theAddress);
-        result.addGetParam("sensor", "false");
-        result.addGetParam("language", "en");
-
-        // See description about GeocoderXMLHandler
-        result.setXmlHandler(new GeocoderXMLHandler());
-
-        return result;
-
-    }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        autoCompView.setText("");
     }
 }
