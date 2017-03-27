@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity
     private static FloatingActionButton fabEdit;
     private FragmentManager manager;
     private static ContactViewFragment contactViewFragment;
+    DrawerLayout drawer;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +48,13 @@ public class MainActivity extends AppCompatActivity
 
         callFragment = new CallFragment();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         fabEdit.hide();
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity
             if(manager.findFragmentByTag("callFragment") == null){
                 if (manager.findFragmentByTag("editFragment")== null){
                     setFragment(0);
+                    navigationView.getMenu().getItem(0).setChecked(true);
                 }else{
                     setFragment(4);
 
@@ -126,6 +129,9 @@ public class MainActivity extends AppCompatActivity
                 fab.setImageDrawable(getDrawable(R.drawable.ic_dialog_add));
             }else if (manager.findFragmentByTag("editFragment") != null && manager.findFragmentByTag("editFragment").isResumed()){
                 fab.setImageDrawable(getDrawable(R.drawable.ic_dialog_add));
+            }else if (manager.findFragmentByTag("callFragment") != null && manager.findFragmentByTag("callFragment").isResumed()){
+                fab.show();
+                navigationView.getMenu().getItem(0).setChecked(true);
             }
             super.onBackPressed();
         }
@@ -161,17 +167,16 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_contactos) {
             setFragment(0);
+            manager.popBackStack(manager.getBackStackEntryCount(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fab.show();
         } else if (id == R.id.nav_telefono) {
             setFragment(2);
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public void setFragment(int position) {
-        android.app.FragmentManager fragmentManager;
         FragmentTransaction fragmentTransaction;
         switch (position) {
             case 0:
